@@ -10,13 +10,11 @@ activityCompose = "1.9.3"
 composeBom = "2024.11.00"
 ksp ="2.0.21-1.0.27"
 roomKtx = "2.6.1"
-ktor = "3.0.0"
+ktor = "3.0.2"
 jetJson= "1.7.3"
 serialization = "1.9.20"
-koin-bom = "3.5.0"
-koin-core = "3.5.0"
-koin-android = "3.5.0"
-
+koin = "3.5.3"
+koinKsp = "1.3.0"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -37,16 +35,22 @@ androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref =
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomKtx" }
 
-ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
-ktor-client-android = { group = "io.ktor", name = "ktor-client-android", version.ref = "ktor" }
+koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
+koin-andorid = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
+koin-andorid-navigation = { group = "io.insert-koin", name = "koin-androidx-navigation", version.ref = "koin" }
+koin-andorid-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koin" }
+koin-annotations = { group = "io.insert-koin", name = "koin-annotations", version.ref = "koinKsp" }
+koin-ksp-compiler = { group = "io.insert-koin", name = "koin-ksp-compiler", version.ref = "koinKsp" }
+
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-serialization-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-client-android = { group = "io.ktor", name = "ktor-client-android", version.ref = "ktor" }
 
 jetbrains-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "jetJson" }
 
-koin-bom = { group = "io.insert-koin", name = "koin-bom", version.ref = "koin-bom" }
-koin-core = { group = "io.insert-koin", name = "koin-core" }
-koin-android = { group = "io.insert-koin", name = "koin-android" }
+
 
 
 [plugins]

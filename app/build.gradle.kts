@@ -60,9 +60,12 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     //coin
-    implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)
-    implementation(libs.koin.android)
+    implementation(libs.koin.andorid)
+    implementation(libs.koin.andorid.navigation)
+    implementation(libs.koin.andorid.compose)
+    implementation(libs.koin.annotations)
+    implementation(libs.koin.ksp.compiler)
 
     // Room
     implementation(libs.androidx.room.ktx)
@@ -72,8 +75,13 @@ dependencies {
     //ktor client
     implementation(libs.ktor.client.android)
     implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.okhttp)
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.json)
+
+
     implementation(libs.jetbrains.json)
+
+
 
 }
