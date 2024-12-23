@@ -1,5 +1,6 @@
 package ir.hoseinahmadi.weatherapplication.data.model
 
+import ir.hoseinahmadi.weatherapplication.data.db.WeatherItem
 import kotlinx.serialization.Serializable
 @Serializable
 data class WeatherResponse(
@@ -16,7 +17,26 @@ data class WeatherResponse(
     val id: Int,
     val name: String,
     val cod: Int
-)
+){
+    fun calculateToWeatherItem(time: String): WeatherItem {
+        return WeatherItem(
+            coord = this.coord,
+            weather = this.weather,
+            base = this.base,
+            main = this.main,
+            visibility = this.visibility,
+            wind = this.wind,
+            clouds = this.clouds,
+            dt = this.dt,
+            sys = this.sys,
+            timezone = this.timezone,
+            id = this.id,
+            name = this.name,
+            cod = this.cod,
+            lastUpdate = time
+        )
+    }
+}
 @Serializable
 data class Coord(
     val lon: Double,

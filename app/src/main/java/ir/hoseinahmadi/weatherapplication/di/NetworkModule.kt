@@ -20,5 +20,5 @@ val NetworkModule = module {
             install(ContentNegotiation) { json(Json { this.ignoreUnknownKeys = true }) }
         }
     }
-    single { MainRepository(get()) }
+    single { MainRepository(get(),get()) }
 }

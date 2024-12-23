@@ -4,13 +4,21 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.statement.HttpResponse
+import ir.hoseinahmadi.weatherapplication.data.db.WeatherItem
+import ir.hoseinahmadi.weatherapplication.data.db.dao.WeatherDao
 import ir.hoseinahmadi.weatherapplication.data.model.WeatherResponse
 import ir.hoseinahmadi.weatherapplication.data.model.apiCall.NetWorResult
 import ir.hoseinahmadi.weatherapplication.util.Constants
 
 class MainRepository(
-    private val client: HttpClient
+    private val client: HttpClient,
+    private val dao: WeatherDao
 ) {
+
+    private suspend fun getWeatherByCityName(cityName: String): WeatherItem? {
+        return dao.getWeatherByCityName(cityName)
+    }
+
     suspend fun getWeatherByCoordinates(
         latitude: Double? = null,
         longitude: Double? = null,
@@ -24,21 +32,29 @@ class MainRepository(
                     url {
                         parameters.append("appid", apiKey)
                         parameters.append("units", units)
-                        parameters.append("lat", latitude.toString())
-                        parameters.append("lon", longitude.toString())
-                        parameters.append("q", city.toString())
+                        latitude?.let { parameters.append("lat", it.toString()) }
+                        longitude?.let { parameters.append("lon", it.toString()) }
+                        city?.let { parameters.append("q", it) }
                     }
                 }
 
             if (response.status.value in 200..299) {
                 val responseBody = response.body<WeatherResponse>()
+                dao.upsertWeather(responseBody.calculateToWeatherItem(System.currentTimeMillis().toString()))
                 NetWorResult.Success(responseBody)
             } else {
-                NetWorResult.Error("Error: ${response.status.value} - ${response.status.description}")
+                val cachedData = city?.let { getWeatherByCityName(it) }
+                cachedData?.let {
+                    NetWorResult.SuccessCash(it)
+                } ?: NetWorResult.Error("Error: ${response.status.value} - ${response.status.description}")
             }
         } catch (e: Exception) {
-            NetWorResult.Error("Exception: ${e.message}")
+            val cachedData = city?.let { getWeatherByCityName(it) }
+            cachedData?.let {
+                NetWorResult.SuccessCash(it)
+            } ?: NetWorResult.Error("Exception: ${e.message}")
         }
     }
+
 
 }
