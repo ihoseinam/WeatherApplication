@@ -37,7 +37,6 @@ fun MainScreen(mainViewModel: MainViewModel) {
     var temp by remember { mutableDoubleStateOf(25.0) }
 
     val pagerState = rememberPagerState { allWeathers.size }
-    val degree = "°C"
 
     MainBackground(allWeathers.getOrNull(pagerState.currentPage)?.main?.temp ?: 0.0) {
         Scaffold(

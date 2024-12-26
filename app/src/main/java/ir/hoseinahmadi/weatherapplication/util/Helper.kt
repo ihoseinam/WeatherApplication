@@ -35,11 +35,27 @@ fun getColorForTemperature(temp: Double): Color {
     }
 }
 
+/*
+fun getBackgroundResource(icon: String): Int {
+    return when (icon) {
+        "01d", "01n" -> R.drawable.clear_sky // آسمان صاف
+        "02d", "02n" -> R.drawable.few_clouds // کمی ابری
+        "03d", "03n" -> R.drawable.scattered_clouds // پراکنده ابری
+        "04d", "04n" -> R.drawable.broken_clouds // ابری متراکم
+        "09d", "09n" -> R.drawable.shower_rain // بارش پراکنده
+        "10d", "10n" -> R.drawable.rain // بارانی
+        "11d", "11n" -> R.drawable.thunderstorm // طوفانی
+        "13d", "13n" -> R.drawable.snow // برفی
+        "50d", "50n" -> R.drawable.mist // مه
+        else -> R.drawable.default_background // پیش‌فرض
+    }
+}
+*/
+
 @Composable
-fun <T> CollectResult(
-    flow: SharedFlow<NetWorResult<T>>,
-    onSuccess: (NetWorResult.Success<T>) -> Unit,
-    onSuccessCash: (WeatherItem) -> Unit,
+fun CollectResult(
+    flow: SharedFlow<NetWorResult>,
+    onSuccess: (NetWorResult.Success) -> Unit,
     onError: (message: String) -> Unit,
     onLoading: () -> Unit,
     apiCall :(() -> Unit )?=null
@@ -52,7 +68,6 @@ fun <T> CollectResult(
                 NetWorResult.Loading -> onLoading()
                 NetWorResult.NotCall -> {}
                 is NetWorResult.Success -> onSuccess(result)
-                is NetWorResult.SuccessCash ->onSuccessCash(result.resData)
             }
         }
     }
