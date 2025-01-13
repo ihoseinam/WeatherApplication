@@ -52,15 +52,16 @@ class MainRepository(
                 val cachedData = city?.let { getWeatherByCityName(it) }
                 cachedData?.let {
                     NetWorResult.Success
-                } ?: NetWorResult.Error("Error: ${response.status.value} - ${response.status.description}")
+                } ?: NetWorResult.Error(response.status.description)
             }
         } catch (e: Exception) {
             val cachedData = city?.let { getWeatherByCityName(it) }
             cachedData?.let {
                 NetWorResult.Success
-            } ?: NetWorResult.Error("Exception: ${e.message}")
+            } ?: NetWorResult.Error("Error")
         }
     }
 
+    suspend fun deletedWeatherItem(weather: WeatherItem){dao.deletedWeatherItem(weather)}
 
 }

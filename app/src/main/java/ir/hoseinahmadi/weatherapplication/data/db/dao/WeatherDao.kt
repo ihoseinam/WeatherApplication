@@ -1,10 +1,10 @@
 package ir.hoseinahmadi.weatherapplication.data.db.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import ir.hoseinahmadi.weatherapplication.data.db.WeatherItem
-import ir.hoseinahmadi.weatherapplication.data.model.WeatherResponse
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -17,6 +17,8 @@ interface WeatherDao {
     suspend fun upsertWeather(weather: WeatherItem)
 
     @Query("select * from weatheritem where name=:cityName")
-   suspend fun getWeatherByCityName(cityName: String): WeatherItem?
+    suspend fun getWeatherByCityName(cityName: String): WeatherItem?
 
+    @Delete
+    suspend fun deletedWeatherItem(weather: WeatherItem)
 }
