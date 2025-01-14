@@ -60,7 +60,7 @@ fun CityComponent(
     val context = LocalContext.current
     val greetingMessage = getGreetingMessage(weatherItem)
     val sunsetTime = formatSunTime(weatherItem.sys.sunset, weatherItem.timezone)
-    val windSpeed = "${weatherItem.wind.speed}m/s"
+    val windSpeed = "${weatherItem.wind.speed} m/s"
 
     CollectResult(
         apiCall = {
@@ -69,14 +69,9 @@ fun CityComponent(
             }
         },
         flow = mainViewModel.weatherState,
-        onError = {
-            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-        },
+        onError = { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() },
         onLoading = {},
-        onSuccess = {
-            Toast.makeText(context, "success", Toast.LENGTH_SHORT).show()
-
-        },
+        onSuccess = { Toast.makeText(context, "update success", Toast.LENGTH_SHORT).show() },
     )
 
     Box(
@@ -127,12 +122,13 @@ fun CityComponent(
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
                 .padding(vertical = 12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                text = "${weatherItem.main.temp.roundToInt()} °C",
+                text = " ${weatherItem.main.temp.roundToInt()}°",
                 color = textColor,
-                fontSize = 50.sp
+                fontSize = 55.sp,
+                textAlign = TextAlign.Center
             )
             Spacer(Modifier.height(4.dp))
             Text(
@@ -169,9 +165,9 @@ fun CityComponent(
                     color = Color.White
                 )
                 BottomComponent(
-                    icon = R.drawable.summer,
-                    title = "SUNSET",
-                    value = sunsetTime,
+                    icon = R.drawable.barometer_13882995,
+                    title = "PRESSURE",
+                    value = weatherItem.main.pressure.toString(),
                     color = textColor
 
                 )

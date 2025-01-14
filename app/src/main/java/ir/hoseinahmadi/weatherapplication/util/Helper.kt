@@ -33,7 +33,8 @@ val weatherColors = mapOf(
 )
 
 fun getTextColorForBackground(backgroundColor: Color): Color {
-    val luminance = (0.299 * backgroundColor.red + 0.587 * backgroundColor.green + 0.114 * backgroundColor.blue)
+    val luminance =
+        (0.299 * backgroundColor.red + 0.587 * backgroundColor.green + 0.114 * backgroundColor.blue)
     return if (luminance > 0.5) Color.Black else Color.White
 }
 
@@ -82,20 +83,19 @@ fun getWeatherIconResId(weatherCondition: String?): Int {
 }
 
 
-
 @Composable
 fun CollectResult(
     flow: SharedFlow<NetWorResult>,
     onSuccess: (NetWorResult.Success) -> Unit,
     onError: (message: String) -> Unit,
     onLoading: () -> Unit,
-    apiCall :(() -> Unit )?=null
+    apiCall: (() -> Unit)? = null
 ) {
     LaunchedEffect(Unit) {
         apiCall?.invoke()
         flow.collectLatest { result ->
             when (result) {
-                is NetWorResult.Error -> onError(result.resMessage?:"Error")
+                is NetWorResult.Error -> onError(result.resMessage ?: "Error")
                 NetWorResult.Loading -> onLoading()
                 NetWorResult.NotCall -> {}
                 is NetWorResult.Success -> onSuccess(result)
@@ -103,9 +103,6 @@ fun CollectResult(
         }
     }
 }
-
-
-
 
 
 fun formatSunTime(timestamp: Long, timezone: Int): String {
@@ -122,9 +119,17 @@ fun getGreetingMessage(weatherItem: WeatherItem): String {
         "Good Night\n${weatherItem.name}"
     }
 }
+
 fun isUpdateAvailable(lastUpdateMillis: Long?): Boolean {
-    if (lastUpdateMillis == null) { return false }
+    if (lastUpdateMillis == null) {
+        return false
+    }
     val currentTimeMillis = System.currentTimeMillis()
     val twoHoursInMillis = 2 * 60 * 60 * 1000
     return (currentTimeMillis - lastUpdateMillis) > twoHoursInMillis
+}
+
+fun getCityIndex(cityList: List<WeatherItem>, cityName: String): Int? {
+    val index = cityList.indexOfFirst { it.name == cityName }
+    return if (index == -1) null else index
 }

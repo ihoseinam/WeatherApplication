@@ -1,5 +1,6 @@
 package ir.hoseinahmadi.weatherapplication.ui.screens
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
@@ -9,19 +10,30 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import ir.hoseinahmadi.weatherapplication.ui.components.MainBackground
 import ir.hoseinahmadi.weatherapplication.ui.components.MainTopBar
 import ir.hoseinahmadi.weatherapplication.ui.components.SheetAddCity
+import ir.hoseinahmadi.weatherapplication.util.getCityIndex
 import ir.hoseinahmadi.weatherapplication.util.getColorForWeatherOrTemperature
 import ir.hoseinahmadi.weatherapplication.viewModel.MainViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun MainScreen(mainViewModel: MainViewModel) {
     val allWeathers by mainViewModel.allWeather.collectAsState()
-    SheetAddCity(mainViewModel = mainViewModel, allWeathers)
     val pagerState = rememberPagerState { allWeathers.size }
+    val coroutineScope = rememberCoroutineScope()
+    SheetAddCity(
+        mainViewModel = mainViewModel,
+        allWeathers = allWeathers
+    ) { city ->
+        getCityIndex(cityList = allWeathers, cityName = city)?.let {
+            coroutineScope.launch { pagerState.animateScrollToPage(it, animationSpec = tween(600)) }
+        }
+    }
     val colors: Pair<Color, Color> = remember(key1 = pagerState.currentPage, key2 = allWeathers) {
         getColorForWeatherOrTemperature(
             weather = allWeathers.getOrNull(pagerState.currentPage)?.weather?.getOrNull(0)?.main,

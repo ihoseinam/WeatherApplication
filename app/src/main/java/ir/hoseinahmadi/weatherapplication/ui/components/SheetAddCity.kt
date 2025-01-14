@@ -5,6 +5,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,6 +27,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
@@ -59,7 +61,11 @@ import ir.hoseinahmadi.weatherapplication.viewModel.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun SheetAddCity(mainViewModel: MainViewModel, allWeathers: List<WeatherItem>) {
+fun SheetAddCity(
+    mainViewModel: MainViewModel,
+    allWeathers: List<WeatherItem>,
+    onCityClick: (String) -> Unit
+) {
     val context = LocalContext.current
     val show by mainViewModel.showSheetAddCity.collectAsState()
     if (!show) return
@@ -92,12 +98,19 @@ fun SheetAddCity(mainViewModel: MainViewModel, allWeathers: List<WeatherItem>) {
             modifier = Modifier.fillMaxSize()
         ) {
             stickyHeader {
-                AddSection(loading = loading) { mainViewModel.fetchWeather(cityName = it) }
+                AddSection(
+                    loading = loading,
+                    enableSearch = allWeathers.size < 5
+                ) { mainViewModel.fetchWeather(cityName = it) }
             }
             items(items = allWeathers, key = { it.name }) {
                 SingleWeatherItem(
                     name = it.name,
-                    onDeleted = { mainViewModel.deletedWeatherItem(it) }
+                    onDeleted = { mainViewModel.deletedWeatherItem(it) },
+                    onClick = {
+                        mainViewModel.updateSheetAddCityState(false)
+                        onCityClick(it.name)
+                    }
                 )
             }
         }
@@ -111,7 +124,8 @@ fun SheetAddCity(mainViewModel: MainViewModel, allWeathers: List<WeatherItem>) {
 @Composable
 private fun SingleWeatherItem(
     name: String = "dfdfdf",
-    onDeleted: () -> Unit = {}
+    onDeleted: () -> Unit = {},
+    onClick: () -> Unit = {}
 ) {
     Row(
         modifier = Modifier
@@ -120,7 +134,8 @@ private fun SingleWeatherItem(
             .clip(RoundedCornerShape(12.dp))
             .border(BorderStroke(1.dp, color = Color.LightGray), RoundedCornerShape(12.dp))
             .background(Color.DarkGray)
-            .padding(horizontal = 8.dp, vertical = 6.dp),
+            .padding(horizontal = 8.dp, vertical = 6.dp)
+            .clickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -145,13 +160,16 @@ private fun SingleWeatherItem(
 @Composable
 private fun AddSection(
     loading: Boolean,
+    enableSearch: Boolean,
     onAdd: (String) -> Unit,
 ) {
     var searchQuery by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
 
     LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
+        if (enableSearch) {
+            focusRequester.requestFocus()
+        }
     }
     OutlinedTextField(
         modifier = Modifier
@@ -170,7 +188,7 @@ private fun AddSection(
             focusedTextColor = Color.White,
             unfocusedTextColor = Color.White,
             cursorColor = Color.White,
-            focusedPlaceholderColor = Color.White
+            focusedPlaceholderColor = Color.White,
         ),
         label = {
             Text(
@@ -182,6 +200,7 @@ private fun AddSection(
                 text = "Enter Name City",
             )
         },
+        readOnly = !enableSearch,
         value = searchQuery,
         onValueChange = { searchQuery = it },
         shape = RoundedCornerShape(12.dp),
@@ -189,12 +208,17 @@ private fun AddSection(
             if (loading) {
                 CircularProgressIndicator(color = Color.White, modifier = Modifier.size(22.dp))
             } else {
-                IconButton(onClick = { onAdd(searchQuery) }
+                IconButton(
+                    colors = IconButtonDefaults.iconButtonColors(
+                        contentColor = Color.White,
+                        disabledContentColor = Color.LightGray
+                    ),
+                    enabled = enableSearch && searchQuery.isNotEmpty(),
+                    onClick = { onAdd(searchQuery) }
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.AddCircle,
                         contentDescription = "",
-                        tint = Color.White
                     )
                 }
             }
@@ -207,6 +231,14 @@ private fun AddSection(
             onDone = {
                 onAdd(searchQuery)
             },
-        )
+        ),
+        supportingText = {
+            if (!enableSearch) {
+                Text(
+                    text = "Restrictions on adding a city",
+                    color = Color.Red,
+                )
+            }
+        }
     )
 }
