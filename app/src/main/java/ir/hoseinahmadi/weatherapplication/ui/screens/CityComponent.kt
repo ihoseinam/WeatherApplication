@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ir.hoseinahmadi.weatherapplication.R
 import ir.hoseinahmadi.weatherapplication.data.db.WeatherItem
+import ir.hoseinahmadi.weatherapplication.ui.components.TabIndicators
 import ir.hoseinahmadi.weatherapplication.util.CollectResult
 import ir.hoseinahmadi.weatherapplication.util.formatSunTime
 import ir.hoseinahmadi.weatherapplication.util.getGreetingMessage
@@ -51,6 +52,9 @@ fun CityComponent(
     weatherItem: WeatherItem,
     mainViewModel: MainViewModel,
     textColor: Color,
+    backColor: Color,
+    currentPage:Int,
+    pageSize:Int,
 ) {
 
     val context = LocalContext.current
@@ -95,7 +99,14 @@ fun CityComponent(
                 fontSize = 35.sp,
                 fontWeight = FontWeight.Medium
             )
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
+            TabIndicators(
+                pageSize =pageSize ,
+                currentPage =currentPage ,
+                textColor = textColor,
+                backgroundColor = backColor
+            )
+            Spacer(Modifier.height(8.dp))
             Text(
                 text = formattedDate,
                 color = textColor,

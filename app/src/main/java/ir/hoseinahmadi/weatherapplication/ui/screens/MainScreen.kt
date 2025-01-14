@@ -44,7 +44,10 @@ fun MainScreen(mainViewModel: MainViewModel) {
                 CityComponent(
                     allWeathers[page],
                     mainViewModel = mainViewModel,
-                    textColor = colors.second
+                    textColor = colors.second,
+                    backColor = colors.first,
+                    pageSize = allWeathers.size,
+                    currentPage = page
                 )
             }
         }
