@@ -7,8 +7,7 @@ Hi! Weatherly is a modern app designed to provide accurate weather information f
 
 ---
 
-## 🚀 [Download Weatherly from GitHub](#)  
-
+## 🚀 [Download Weatherly from GitHub](https://github.com/ihoseinam/WeatherApplication/raw/refs/heads/master/app/release/app-release.apk)  
 
 ---
 
