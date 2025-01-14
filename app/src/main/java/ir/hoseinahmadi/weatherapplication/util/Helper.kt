@@ -13,73 +13,75 @@ import java.util.Date
 import java.util.Locale
 
 val temperatureColors = listOf(
-    Color(0xFF001F3F), // سرد (کمتر از 0 درجه)
-    Color(0xFF0074D9), // خنک (0-10 درجه)
-    Color(0xFF7FDBFF), // معتدل (10-20 درجه)
-    Color(0xFF2ECC40), // گرم (20-30 درجه)
-    Color(0xFFFFDC00), // داغ (بیشتر از 30 درجه)
+    Color(0xFF002B5B), // سرد (کمتر از 0 درجه) - آبی تیره
+    Color(0xFF0D47A1), // خنک (0-10 درجه) - آبی روشن‌تر
+    Color(0xFF4CAF50), // معتدل (10-20 درجه) - سبز ملایم
+    Color(0xFFFFA726), // گرم (20-30 درجه) - نارنجی
+    Color(0xFFD32F2F)  // داغ (بیشتر از 30 درجه) - قرمز
 )
 
 val weatherColors = mapOf(
-    "Clear" to Color(0xFF87CEEB), // صاف
-    "Clouds" to Color(0xFFB0C4DE), // ابری
-    "Rain" to Color(0xFF708090), // بارانی
-    "Snow" to Color(0xFFFFFFFF), // برفی
-    "Thunderstorm" to Color(0xFF4B0082), // طوفانی
-    "Haze" to Color(0xFF778899), // مه‌آلود
-    "Fog" to Color(0xFFB0AFAF), // مه
-    "Drizzle" to Color(0xFFA4D3EE), // نم‌باران
-    "Mist" to Color(0xFFD3D3D3) // غبار
+    "Clear" to Color(0xFF2196F3), // صاف - آبی
+    "Clouds" to Color(0xFF90A4AE), // ابری - خاکستری
+    "Rain" to Color(0xFF546E7A), // بارانی - خاکستری تیره
+    "Snow" to Color(0xFFB3E5FC), // برفی - آبی روشن
+    "Thunderstorm" to Color(0xFF512DA8), // طوفانی - بنفش تیره
+    "Haze" to Color(0xFF78909C), // مه‌آلود - خاکستری ملایم
+    "Fog" to Color(0xFFB0BEC5), // مه - خاکستری
+    "Drizzle" to Color(0xFF81D4FA), // نم‌باران - آبی روشن
+    "Mist" to Color(0xFFECEFF1) // غبار - خاکستری بسیار روشن
 )
 
-fun getColorForWeatherOrTemperature(weather: String?, temp: Double): Color {
-/*    weather?.let {
+fun getTextColorForBackground(backgroundColor: Color): Color {
+    val luminance = (0.299 * backgroundColor.red + 0.587 * backgroundColor.green + 0.114 * backgroundColor.blue)
+    return if (luminance > 0.5) Color.Black else Color.White
+}
+
+fun getColorForWeatherOrTemperature(weather: String?, temp: Double): Pair<Color, Color> {
+    weather?.let {
         val weatherColor = weatherColors[it]
         if (weatherColor != null) {
-            return weatherColor
+            val textColor = getTextColorForBackground(weatherColor)
+            return weatherColor to textColor
         }
-    }*/
-    return when {
+    }
+    val backgroundColor = when {
         temp < 0 -> temperatureColors[0]
         temp in 0.0..10.0 -> temperatureColors[1]
         temp in 10.0..20.0 -> temperatureColors[2]
         temp in 20.0..30.0 -> temperatureColors[3]
         else -> temperatureColors[4]
     }
+    val textColor = getTextColorForBackground(backgroundColor)
+    return backgroundColor to textColor
 }
 
-/*
-fun getBackgroundResource(icon: String): Int {
-    return when (icon) {
-        "01d", "01n" -> R.drawable.clear_sky // آسمان صاف
-        "02d", "02n" -> R.drawable.few_clouds // کمی ابری0.
-        "03d", "03n" -> R.drawable.scattered_clouds // پراکنده ابری
-        "04d", "04n" -> R.drawable.broken_clouds // ابری متراکم
-        "09d", "09n" -> R.drawable.shower_rain // بارش پراکنده
-        "10d", "10n" -> R.drawable.rain // بارانی
-        "11d", "11n" -> R.drawable.thunderstorm // طوفانی
-        "13d", "13n" -> R.drawable.snow // برفی
-        "50d", "50n" -> R.drawable.mist // مه
-        else -> R.drawable.default_background // پیش‌فرض
-    }
-}
-*/
 
 fun getWeatherIconResId(weatherCondition: String?): Int {
     return when (weatherCondition) {
-        "Clear" -> R.drawable.icon3 // آسمان صاف
-        "Clouds" -> R.drawable.icon14 // ابری
-        "Rain" -> R.drawable.icon7 // بارانی
-        "Snow" -> R.drawable.icon1 // برفی
-        "Thunderstorm" -> R.drawable.icon8 // طوفانی
-        "Haze" -> R.drawable.icon6 // مه‌آلود
-        "Fog" -> R.drawable.icon10 // مه
-        "Drizzle" -> R.drawable.icon5 // نم‌باران
-        "Mist" -> R.drawable.icon11 // غبار
-        "Windy" -> R.drawable.icon13 // باد شدید
-        else -> R.drawable.icon14 // حالت پیش‌فرض (ابری)
+        "Clear Day" -> R.drawable.clear_day // آسمان صاف (روز)
+        "Clear Night" -> R.drawable.clear_night // آسمان صاف (شب)
+        "Partly Cloudy Day" -> R.drawable.partly_cloudy_day // نیمه‌ابری (روز)
+        "Partly Cloudy Night" -> R.drawable.cloudy_night_2 // نیمه‌ابری (شب)
+        "Cloudy" -> R.drawable.cloudy_day_1 // کاملاً ابری
+        "Fair Day" -> R.drawable.fair_day // صاف و دلپذیر (روز)
+        "Fair Night" -> R.drawable.fair_night // صاف و دلپذیر (شب)
+        "Fog" -> R.drawable.fog // مه
+        "Rain" -> R.drawable.rain // بارانی
+        "Rain and Snow Mix" -> R.drawable.rain_and_snow_mix // ترکیب باران و برف
+        "Scattered Thunderstorms" -> R.drawable.scattered_thunderstorms // رعد و برق پراکنده
+        "Isolated Thunderstorms" -> R.drawable.isolated_thunderstorms // رعد و برق پراکنده
+        "Snow" -> R.drawable.snowy_5 // برفی
+        "Windy" -> R.drawable.windy // باد شدید
+        "Summer" -> R.drawable.summer // تابستانی (گرم و آفتابی)
+        "Haze" -> R.drawable.fog // مه‌آلود
+        "Mist" -> R.drawable.fog // غبار
+        "Drizzle" -> R.drawable.rain_and_sleet_mix // نم‌باران (بارش خفیف)
+        else -> R.drawable.day // حالت پیش‌فرض (ابری)
     }
 }
+
+
 
 @Composable
 fun CollectResult(
@@ -126,5 +128,3 @@ fun isUpdateAvailable(lastUpdateMillis: Long?): Boolean {
     val twoHoursInMillis = 2 * 60 * 60 * 1000
     return (currentTimeMillis - lastUpdateMillis) > twoHoursInMillis
 }
-
-

@@ -8,31 +8,32 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import ir.hoseinahmadi.weatherapplication.ui.components.MainBackground
 import ir.hoseinahmadi.weatherapplication.ui.components.MainTopBar
 import ir.hoseinahmadi.weatherapplication.ui.components.SheetAddCity
+import ir.hoseinahmadi.weatherapplication.util.getColorForWeatherOrTemperature
 import ir.hoseinahmadi.weatherapplication.viewModel.MainViewModel
 
 @Composable
 fun MainScreen(mainViewModel: MainViewModel) {
     val allWeathers by mainViewModel.allWeather.collectAsState()
-    SheetAddCity(mainViewModel = mainViewModel,allWeathers)
-    var ttt by remember { mutableStateOf("") }
-    var temp by remember { mutableDoubleStateOf(25.0) }
+    SheetAddCity(mainViewModel = mainViewModel, allWeathers)
     val pagerState = rememberPagerState { allWeathers.size }
+    val colors: Pair<Color, Color> = remember(key1 = pagerState.currentPage, key2 = allWeathers) {
+        getColorForWeatherOrTemperature(
+            weather = allWeathers.getOrNull(pagerState.currentPage)?.weather?.getOrNull(0)?.main,
+            temp = allWeathers.getOrNull(pagerState.currentPage)?.main?.temp ?: 0.0,
+        )
+    }
     MainBackground(
-        temp = allWeathers.getOrNull(pagerState.currentPage)?.main?.temp ?: 0.0,
-        weather = allWeathers.getOrNull(pagerState.currentPage)?.weather?.getOrNull(0)?.main
+        color = colors.first
     ) {
         Scaffold(
             containerColor = Color.Transparent,
-            topBar = { MainTopBar(mainViewModel) }
+            topBar = { MainTopBar(mainViewModel, color = colors.second) }
         ) { innerPadding ->
             HorizontalPager(
                 state = pagerState,
@@ -40,7 +41,11 @@ fun MainScreen(mainViewModel: MainViewModel) {
                     .fillMaxSize()
                     .padding(innerPadding)
             ) { page ->
-                CityComponent(allWeathers[page], mainViewModel = mainViewModel)
+                CityComponent(
+                    allWeathers[page],
+                    mainViewModel = mainViewModel,
+                    textColor = colors.second
+                )
             }
         }
     }

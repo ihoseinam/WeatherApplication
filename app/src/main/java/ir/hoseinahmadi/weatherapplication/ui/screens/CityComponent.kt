@@ -1,6 +1,7 @@
 package ir.hoseinahmadi.weatherapplication.ui.screens
 
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -45,10 +47,13 @@ import java.util.Locale
 import kotlin.math.roundToInt
 
 @Composable
-fun CityComponent(weatherItem: WeatherItem, mainViewModel: MainViewModel) {
+fun CityComponent(
+    weatherItem: WeatherItem,
+    mainViewModel: MainViewModel,
+    textColor: Color,
+) {
 
-
-    val temperature = "${weatherItem.main.temp.toInt()}°C"
+    val context = LocalContext.current
     val greetingMessage = getGreetingMessage(weatherItem)
     val sunsetTime = formatSunTime(weatherItem.sys.sunset, weatherItem.timezone)
     val windSpeed = "${weatherItem.wind.speed}m/s"
@@ -61,11 +66,11 @@ fun CityComponent(weatherItem: WeatherItem, mainViewModel: MainViewModel) {
         },
         flow = mainViewModel.weatherState,
         onError = {
-            Log.i("2222", "onError :$it")
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
         },
         onLoading = {},
         onSuccess = {
-            Log.i("2222", "update success")
+            Toast.makeText(context, "success", Toast.LENGTH_SHORT).show()
 
         },
     )
@@ -86,23 +91,22 @@ fun CityComponent(weatherItem: WeatherItem, mainViewModel: MainViewModel) {
         ) {
             Text(
                 text = weatherItem.name,
-                color = Color.White,
+                color = textColor,
                 fontSize = 35.sp,
                 fontWeight = FontWeight.Medium
             )
             Spacer(Modifier.height(12.dp))
             Text(
                 text = formattedDate,
-                color = Color.White,
+                color = textColor,
                 fontSize = 20.sp,
             )
-            Spacer(Modifier.height(50.dp))
             val icon =
                 remember(key1 = weatherItem) { getWeatherIconResId(weatherItem.weather.getOrNull(0)?.main) }
             Image(
                 painter = painterResource(icon),
                 contentDescription = "",
-                Modifier.size(225.dp),
+                Modifier.size(300.dp),
                 contentScale = ContentScale.Crop
             )
         }
@@ -116,13 +120,13 @@ fun CityComponent(weatherItem: WeatherItem, mainViewModel: MainViewModel) {
         ) {
             Text(
                 text = "${weatherItem.main.temp.roundToInt()} °C",
-                color = Color.White,
+                color = textColor,
                 fontSize = 50.sp
             )
             Spacer(Modifier.height(4.dp))
             Text(
                 text = greetingMessage,
-                color = Color.White,
+                color = textColor,
                 textAlign = TextAlign.Center
             )
             HorizontalDivider(
@@ -143,7 +147,8 @@ fun CityComponent(weatherItem: WeatherItem, mainViewModel: MainViewModel) {
                 BottomComponent(
                     icon = R.drawable.windy,
                     title = "WIND",
-                    value = windSpeed
+                    value = windSpeed,
+                    color = textColor
                 )
                 VerticalDivider(
                     modifier = Modifier
@@ -155,7 +160,9 @@ fun CityComponent(weatherItem: WeatherItem, mainViewModel: MainViewModel) {
                 BottomComponent(
                     icon = R.drawable.summer,
                     title = "SUNSET",
-                    value = sunsetTime
+                    value = sunsetTime,
+                    color = textColor
+
                 )
                 VerticalDivider(
                     modifier = Modifier
@@ -167,7 +174,8 @@ fun CityComponent(weatherItem: WeatherItem, mainViewModel: MainViewModel) {
                 BottomComponent(
                     icon = R.drawable.humidity,
                     title = "HUMIDITY",
-                    value ="${weatherItem.main.humidity}%"
+                    value = "${weatherItem.main.humidity}%",
+                    color = textColor
                 )
 
             }
@@ -181,7 +189,8 @@ fun CityComponent(weatherItem: WeatherItem, mainViewModel: MainViewModel) {
 fun BottomComponent(
     @DrawableRes icon: Int,
     title: String,
-    value: String
+    value: String,
+    color: Color,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
@@ -189,7 +198,7 @@ fun BottomComponent(
         Icon(
             painter = painterResource(icon),
             contentDescription = "",
-            tint = Color.White,
+            tint = color,
             modifier = Modifier.size(34.dp)
         )
         Spacer(Modifier.height(10.dp))
@@ -197,14 +206,14 @@ fun BottomComponent(
             text = title,
             fontWeight = FontWeight.SemiBold,
             fontSize = 18.sp,
-            color = Color.White
+            color = color
         )
         Spacer(Modifier.height(2.dp))
         Text(
             text = value,
             fontWeight = FontWeight.Medium,
             fontSize = 20.sp,
-            color = Color.White
+            color =color
         )
     }
 }

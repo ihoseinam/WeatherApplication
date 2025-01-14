@@ -62,8 +62,10 @@ import ir.hoseinahmadi.weatherapplication.viewModel.MainViewModel
 fun SheetAddCity(mainViewModel: MainViewModel, allWeathers: List<WeatherItem>) {
     val context = LocalContext.current
     val show by mainViewModel.showSheetAddCity.collectAsState()
+    if (!show) return
     val sheetState = rememberModalBottomSheetState(true)
     var loading by remember { mutableStateOf(false) }
+
     CollectResult(
         flow = mainViewModel.weatherState,
         onError = {
@@ -79,7 +81,6 @@ fun SheetAddCity(mainViewModel: MainViewModel, allWeathers: List<WeatherItem>) {
             loading = false
         }
     )
-    if (!show) return
     ModalBottomSheet(
         shape = RoundedCornerShape(12.dp),
         containerColor = Color.Black,

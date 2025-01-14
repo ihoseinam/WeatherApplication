@@ -18,7 +18,10 @@ import androidx.compose.ui.unit.dp
 import ir.hoseinahmadi.weatherapplication.viewModel.MainViewModel
 
 @Composable
-fun MainTopBar(mainViewModel: MainViewModel) {
+fun MainTopBar(
+    mainViewModel: MainViewModel,
+    color: Color,
+) {
     Row(
         modifier = Modifier
             .statusBarsPadding()
@@ -31,14 +34,14 @@ fun MainTopBar(mainViewModel: MainViewModel) {
             Icon(
                 imageVector = Icons.Rounded.MoreVert,
                 contentDescription = "",
-                tint = Color.White
+                tint = color
             )
         }
         IconButton(onClick = { mainViewModel.updateSheetAddCityState(true) }) {
             Icon(
                 imageVector = Icons.Rounded.Add,
                 contentDescription = "",
-                tint = Color.White
+                tint = color
             )
 
         }

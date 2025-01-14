@@ -1,5 +1,6 @@
 package ir.hoseinahmadi.weatherapplication.repository
 
+import android.util.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -55,6 +56,7 @@ class MainRepository(
                 } ?: NetWorResult.Error(response.status.description)
             }
         } catch (e: Exception) {
+            Log.i("1212",e.message.toString())
             val cachedData = city?.let { getWeatherByCityName(it) }
             cachedData?.let {
                 NetWorResult.Success
