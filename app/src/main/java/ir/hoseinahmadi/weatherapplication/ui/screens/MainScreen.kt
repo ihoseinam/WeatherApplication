@@ -26,19 +26,19 @@ fun MainScreen(mainViewModel: MainViewModel) {
     val allWeathers by mainViewModel.allWeather.collectAsState()
     val pagerState = rememberPagerState { allWeathers.size }
     val coroutineScope = rememberCoroutineScope()
-    SheetAddCity(
-        mainViewModel = mainViewModel,
-        allWeathers = allWeathers
-    ) { city ->
-        getCityIndex(cityList = allWeathers, cityName = city)?.let {
-            coroutineScope.launch { pagerState.animateScrollToPage(it, animationSpec = tween(600)) }
-        }
-    }
     val colors: Pair<Color, Color> = remember(key1 = pagerState.currentPage, key2 = allWeathers) {
         getColorForWeatherOrTemperature(
             weather = allWeathers.getOrNull(pagerState.currentPage)?.weather?.getOrNull(0)?.main,
             temp = allWeathers.getOrNull(pagerState.currentPage)?.main?.temp ?: 0.0,
         )
+    }
+    SheetAddCity(
+        mainViewModel = mainViewModel,
+        allWeathers = allWeathers,
+    ) { city ->
+        getCityIndex(cityList = allWeathers, cityName = city)?.let {
+            coroutineScope.launch { pagerState.animateScrollToPage(it, animationSpec = tween(600)) }
+        }
     }
     MainBackground(
         color = colors.first

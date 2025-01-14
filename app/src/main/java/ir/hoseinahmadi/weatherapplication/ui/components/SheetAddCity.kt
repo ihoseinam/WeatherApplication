@@ -57,6 +57,7 @@ import androidx.compose.ui.unit.dp
 import ir.hoseinahmadi.weatherapplication.data.db.WeatherItem
 import ir.hoseinahmadi.weatherapplication.data.model.City
 import ir.hoseinahmadi.weatherapplication.util.CollectResult
+import ir.hoseinahmadi.weatherapplication.util.getColorForWeatherOrTemperature
 import ir.hoseinahmadi.weatherapplication.viewModel.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -64,7 +65,7 @@ import ir.hoseinahmadi.weatherapplication.viewModel.MainViewModel
 fun SheetAddCity(
     mainViewModel: MainViewModel,
     allWeathers: List<WeatherItem>,
-    onCityClick: (String) -> Unit
+    onCityClick: (String) -> Unit,
 ) {
     val context = LocalContext.current
     val show by mainViewModel.showSheetAddCity.collectAsState()
@@ -105,12 +106,13 @@ fun SheetAddCity(
             }
             items(items = allWeathers, key = { it.name }) {
                 SingleWeatherItem(
-                    name = it.name,
+                    weatherItem = it,
                     onDeleted = { mainViewModel.deletedWeatherItem(it) },
                     onClick = {
                         mainViewModel.updateSheetAddCityState(false)
                         onCityClick(it.name)
-                    }
+                    },
+
                 )
             }
         }
@@ -120,29 +122,34 @@ fun SheetAddCity(
 
 }
 
-@Preview
 @Composable
 private fun SingleWeatherItem(
-    name: String = "dfdfdf",
+   weatherItem: WeatherItem,
     onDeleted: () -> Unit = {},
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
 ) {
+    val colors: Pair<Color, Color> = remember( key1 = weatherItem) {
+        getColorForWeatherOrTemperature(
+            weather = weatherItem.weather.getOrNull(0)?.main,
+            temp = weatherItem.main.temp,
+        )
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 3.dp, horizontal = 6.dp)
             .clip(RoundedCornerShape(12.dp))
-            .border(BorderStroke(1.dp, color = Color.LightGray), RoundedCornerShape(12.dp))
-            .background(Color.DarkGray)
+            .background(colors.first)
             .padding(horizontal = 8.dp, vertical = 6.dp)
             .clickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = name,
+            text = weatherItem.name,
             style = MaterialTheme.typography.bodyLarge,
-            color = Color.White,
+            color = colors.second,
             fontWeight = FontWeight.SemiBold
         )
         IconButton(
@@ -151,7 +158,7 @@ private fun SingleWeatherItem(
             Icon(
                 imageVector = Icons.Rounded.Delete,
                 contentDescription = "",
-                tint = Color.Red
+                tint =colors.second
             )
         }
     }
