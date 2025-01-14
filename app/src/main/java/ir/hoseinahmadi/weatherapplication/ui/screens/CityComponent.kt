@@ -186,6 +186,7 @@ fun CityComponent(
                 )
 
             }
+            Spacer(Modifier.navigationBarsPadding())
         }
 
 
