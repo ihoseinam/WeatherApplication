@@ -42,7 +42,7 @@ Hi! Weatherly is a modern app designed to provide accurate weather information f
 
 ## :iphone: Screenshots  
 
-![App Screenshot](#)  
+![App Screenshot](https://raw.githubusercontent.com/ihoseinam/WeatherApplication/refs/heads/master/photo_2025-01-14_16-44-34.jpg)  
 
 ---  
 
