@@ -1,5 +1,6 @@
 package ir.hoseinahmadi.weatherapplication.ui.screens
 
+import android.util.Log
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,10 +18,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,6 +37,7 @@ import ir.hoseinahmadi.weatherapplication.ui.components.SheetAddCity
 import ir.hoseinahmadi.weatherapplication.util.getCityIndex
 import ir.hoseinahmadi.weatherapplication.util.getColorForWeatherOrTemperature
 import ir.hoseinahmadi.weatherapplication.viewModel.MainViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -46,14 +51,30 @@ fun MainScreen(mainViewModel: MainViewModel) {
             temp = allWeathers.getOrNull(pagerState.currentPage)?.main?.temp ?: 0.0,
         )
     }
+    var enableUpdate by remember { mutableStateOf(true) }
     SheetAddCity(
         mainViewModel = mainViewModel,
         allWeathers = allWeathers,
-    ) { city ->
-        getCityIndex(cityList = allWeathers, cityName = city)?.let {
-            coroutineScope.launch { pagerState.animateScrollToPage(it, animationSpec = tween(600)) }
+        onAdd = { city ->
+            coroutineScope.launch {
+                delay(250)
+                getCityIndex(cityList = allWeathers, cityName = city)?.let {
+                    enableUpdate = false
+                    pagerState.animateScrollToPage(it, animationSpec = tween(600))
+                }
+            }
+        },
+        onCityClick = { city ->
+            getCityIndex(cityList = allWeathers, cityName = city)?.let {
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(
+                        it,
+                        animationSpec = tween(600)
+                    )
+                }
+            }
         }
-    }
+    )
     MainBackground(
         color = colors.first
     ) {
@@ -62,24 +83,26 @@ fun MainScreen(mainViewModel: MainViewModel) {
             topBar = { MainTopBar(mainViewModel, color = colors.second) }
         ) { innerPadding ->
             if (allWeathers.isEmpty()) {
-                EmptyCityList{
+                EmptyCityList {
                     mainViewModel.updateSheetAddCityState(true)
                 }
             } else {
-            HorizontalPager(
-                state = pagerState,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-            ) { page ->
-                val weatherItem = remember(key1 = allWeathers, key2 = page) { allWeathers[page] }
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                ) { page ->
+                    val weatherItem =
+                        remember(key1 = allWeathers, key2 = page) { allWeathers[page] }
                     CityComponent(
                         weatherItem = weatherItem,
                         mainViewModel = mainViewModel,
                         textColor = colors.second,
                         backColor = colors.first,
                         pageSize = allWeathers.size,
-                        currentPage = page
+                        currentPage = page,
+                        enableUpdate = enableUpdate,
                     )
                 }
 

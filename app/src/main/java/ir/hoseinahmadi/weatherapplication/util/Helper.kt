@@ -1,5 +1,6 @@
 package ir.hoseinahmadi.weatherapplication.util
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Color

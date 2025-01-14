@@ -43,23 +43,18 @@ class MainRepository(
 
             if (response.status.value in 200..299) {
                 val responseBody = response.body<WeatherResponse>()
-                dao.upsertWeather(
-                    responseBody.calculateToWeatherItem(
-                        System.currentTimeMillis().toString()
-                    )
-                )
-                NetWorResult.Success
+                dao.upsertWeather(responseBody.calculateToWeatherItem(System.currentTimeMillis().toString()))
+                NetWorResult.Success(responseBody.name)
             } else {
                 val cachedData = city?.let { getWeatherByCityName(it) }
                 cachedData?.let {
-                    NetWorResult.Success
+                    NetWorResult.Success(it.name)
                 } ?: NetWorResult.Error(response.status.description)
             }
         } catch (e: Exception) {
-            Log.i("1212",e.message.toString())
             val cachedData = city?.let { getWeatherByCityName(it) }
             cachedData?.let {
-                NetWorResult.Success
+                NetWorResult.Success(it.name)
             } ?: NetWorResult.Error("Error")
         }
     }

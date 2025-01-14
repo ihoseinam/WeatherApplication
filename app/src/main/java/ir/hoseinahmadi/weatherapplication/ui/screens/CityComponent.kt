@@ -55,6 +55,7 @@ fun CityComponent(
     backColor: Color,
     currentPage:Int,
     pageSize:Int,
+    enableUpdate :Boolean,
 ) {
 
     val context = LocalContext.current
@@ -64,7 +65,7 @@ fun CityComponent(
 
     CollectResult(
         apiCall = {
-            if (isUpdateAvailable(weatherItem.lastUpdate.toLongOrNull())) {
+            if (isUpdateAvailable(weatherItem.lastUpdate.toLongOrNull())&&enableUpdate) {
                 mainViewModel.fetchWeather(cityName = weatherItem.name)
             }
         },
